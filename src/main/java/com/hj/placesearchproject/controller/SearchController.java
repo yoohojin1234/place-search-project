@@ -43,8 +43,11 @@ public class SearchController {
 
         NaverSearchPlace naverSearchPlace = searchService.naverSearch(requestParam.toString(), NaverSearchPlace.class, q);
         List<String> naverPlaceList = new ArrayList<>();
+        List<String> naverPlaceNonBlankList = new ArrayList<>();
         for(NaverItem item : naverSearchPlace.getItems()) {
-            naverPlaceList.add(item.getTitle().replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>",""));
+            String deleteHtmlTagTitle = item.getTitle().replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>","");
+            naverPlaceList.add(deleteHtmlTagTitle);
+            naverPlaceNonBlankList.add(deleteHtmlTagTitle.replaceAll("\\s", ""));
         }
 
         int kakaoSize = maxSize - naverSearchPlace.getItems().size();
@@ -56,13 +59,14 @@ public class SearchController {
 
         List<String> resultPlaceList = new ArrayList<>();
 
-        for(String place : kakaoPlaceList) {
-            if(naverPlaceList.contains(place)) {
-                resultPlaceList.add(place);
-            }
-        }
-
         for(int i = 0; i < kakaoPlaceList.size(); i++) {
+            if(naverPlaceNonBlankList.contains(kakaoPlaceList.get(i).replaceAll("\\s", ""))) {
+                resultPlaceList.add(kakaoPlaceList.get(i));
+                naverPlaceList.remove(kakaoPlaceList.get(i));
+                kakaoPlaceList.remove(i);
+                i--;
+            }
+
             if(naverPlaceList.contains(kakaoPlaceList.get(i))) {
                 resultPlaceList.add(kakaoPlaceList.get(i));
                 naverPlaceList.remove(kakaoPlaceList.get(i));

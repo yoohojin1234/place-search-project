@@ -44,14 +44,14 @@ public class SearchController {
         NaverSearchPlace naverSearchPlace = searchService.naverSearch(requestParam.toString(), NaverSearchPlace.class, q);
         List<String> naverPlaceList = new ArrayList<>();
         for(NaverItem item : naverSearchPlace.getItems()) {
-            naverPlaceList.add(item.getTitle());
+            naverPlaceList.add(item.getTitle().replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>",""));
         }
 
         int kakaoSize = maxSize - naverSearchPlace.getItems().size();
         KakaoSearchPlace kakaoSearchPlace = searchService.kakaoSearch(requestParam.toString(), KakaoSearchPlace.class, q, kakaoSize);
         List<String> kakaoPlaceList = new ArrayList<>();
         for(KakaoDocument document : kakaoSearchPlace.getDocuments()) {
-            kakaoPlaceList.add(document.getPlaceName());
+            kakaoPlaceList.add(document.getPlaceName().replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>",""));
         }
 
         List<String> resultPlaceList = new ArrayList<>();
@@ -60,7 +60,6 @@ public class SearchController {
             if(naverPlaceList.contains(place)) {
                 resultPlaceList.add(place);
             }
-
         }
 
         for(int i = 0; i < kakaoPlaceList.size(); i++) {

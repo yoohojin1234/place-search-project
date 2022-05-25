@@ -1,0 +1,26 @@
+server:
+  port: 8088
+
+app:
+  kakao:
+    apiKey: #{your_api_key}
+    url: 'dapi.kakao.com/v2/local/search/keyword.json'
+  naver:
+    clientId: #{your_client_id}
+    clientSecret: #{your_client_secret}
+    url: 'openapi.naver.com/v1/search/local.json'
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: 'jdbc:mysql://#{your_ip}:#{your_port}/#{your_db}?useUnicode=true&characterEncoding=utf8'
+    username: #{your_username}
+    password: #{your_password}
+mybatis:
+  type-aliases-package: com.hj.placesearchproject
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    root: INFO

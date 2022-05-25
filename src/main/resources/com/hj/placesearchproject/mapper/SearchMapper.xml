@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hj.placesearchproject.mapper.SearchMapper">
+    <insert id="insertSearchLog" parameterType="com.hj.placesearchproject.model.SearchLog">
+        insert into search_logs(
+            search_place
+        ) values (
+            #{searchPlace}
+        )
+    </insert>
+
+    <select id="findTop10" resultType="com.hj.placesearchproject.model.SearchLog">
+        select
+            top10.*
+        from (
+            select
+                search_place,
+                count(*) as count
+            from search_logs
+            group by 1
+        ) top10
+        order by count desc
+        limit 10
+    </select>
+</mapper>

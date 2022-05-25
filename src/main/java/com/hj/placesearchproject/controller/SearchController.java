@@ -12,11 +12,15 @@ import com.hj.placesearchproject.properties.KakaoProperty;
 import com.hj.placesearchproject.service.SearchService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +36,9 @@ public class SearchController {
 
     @GetMapping(value = "/place", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<?> place(@ModelAttribute PlaceParam placeParam) {
-        String q = placeParam.getQ();
+    public ResponseEntity<?> place(HttpServletRequest request) throws UnsupportedEncodingException {
+
+        String q = URLDecoder.decode(request.getParameter("q"), "UTF-8");
         SearchLog searchLog = new SearchLog();
         searchLog.setSearchPlace(q);
         searchService.insertSearchLog(searchLog);
@@ -61,13 +66,6 @@ public class SearchController {
 
         for(int i = 0; i < kakaoPlaceList.size(); i++) {
             if(naverPlaceNonBlankList.contains(kakaoPlaceList.get(i).replaceAll("\\s", ""))) {
-                resultPlaceList.add(kakaoPlaceList.get(i));
-                naverPlaceList.remove(kakaoPlaceList.get(i));
-                kakaoPlaceList.remove(i);
-                i--;
-            }
-
-            if(naverPlaceList.contains(kakaoPlaceList.get(i))) {
                 resultPlaceList.add(kakaoPlaceList.get(i));
                 naverPlaceList.remove(kakaoPlaceList.get(i));
                 kakaoPlaceList.remove(i);
